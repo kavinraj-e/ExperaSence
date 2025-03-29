@@ -1,0 +1,18 @@
+MedicineName,Pattern,StorageTemp,Humidity,ExpiryDays,SpoilageRisk
+Amphetamine and Dextroamphetamine,Amphetamine|Dextroamphetamine,20,60,365,High
+Ibuprofen,Ibuprofen,22,70,730,Low
+Paracetamol,Paracetamol,25,65,730,Low
+Aspirin,Aspirin,24,60,365,Medium
+Amoxicillin,Amoxicillin,5,80,180,High
+Ciprofloxacin,Ciprofloxacin,4,75,365,Medium
+Azithromycin,Azithromycin,5,70,365,Medium
+Metformin,Metformin,25,60,730,Low
+Atorvastatin,Atorvastatin,20,55,365,Low
+Losartan,Losartan,22,60,730,Low
+Simvastatin,Simvastatin,20,60,365,Low
+Omeprazole,Omeprazole,25,50,365,Medium
+Hydrochlorothiazide,Hydrochlorothiazide,20,60,730,Low
+Gabapentin,Gabapentin,25,65,180,High
+Sertraline,Sertraline,22,60,365,Medium
+Lisinopril,Lisinopril,20,55,730,Low
+Prednisone,Prednisone,25,70,180,High
