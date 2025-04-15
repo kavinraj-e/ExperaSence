@@ -1,40 +1,35 @@
-import requests
-import pickle
 from flask import Flask, request, jsonify
-import os
+import joblib
+import re
 
 app = Flask(__name__)
 
-# Google Drive direct download links
-vectorizer_url = "https://drive.google.com/uc?export=download&id=1i2S80-td3j7EeDYYgNDo9wd83LgYSbd_"
-model_url = "https://drive.google.com/uc?export=download&id=1lZPtoIwWThuFoL9ljT_lf1rlRBfn4P-O"
+tfidf = joblib.load('tfidf_vectorizer.pkl')
+mlb = joblib.load('mlb.pkl')
+model = joblib.load('svm_model.pkl')  # Best model
 
-# Download and load the model
-def download_file(url, filename):
-    response = requests.get(url)
-    with open(filename, "wb") as file:
-        file.write(response.content)
-
-# Download model & vectorizer
-download_file(model_url, "model.pkl")
-download_file(vectorizer_url, "vectorizer.pkl")
-
-# Load model & vectorizer
-model = pickle.load(open("model.pkl", "rb"))
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+def clean_composition(text):
+    text = re.sub(r'\(\d*\.?\d*mg[/ml]*\)', '', text)  # Remove dosages like (500mg)
+    text = text.replace('+', ' ').lower().strip()
+    return text
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
-    ingredients = data['ingredients']
+    try:
+        data = request.get_json()
+        composition = data.get('composition', '')
+        if not composition:
+            return jsonify({'error': 'No composition provided'}), 400
 
-    # Transform input
-    input_features = vectorizer.transform([" ".join(ingredients)])
-    
-    # Predict
-    prediction = model.predict(input_features)
+        cleaned = clean_composition(composition)
+        transformed = tfidf.transform([cleaned])
+        prediction = model.predict(transformed)
+        side_effects = mlb.inverse_transform(prediction)[0]
 
-    return jsonify({"sideEffects": prediction.tolist()})
+        return jsonify({'sideEffects': list(side_effects)})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True, port=7000)

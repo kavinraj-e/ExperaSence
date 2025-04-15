@@ -6,12 +6,12 @@ exports.predictSideEffects = async (req, res) => {
         const { userId, name, ingredients, expiryDate } = req.body;
         const expiry = new Date(expiryDate);
         const today = new Date();
-
+        const composition = ingredients.join("+");
         let status, sideEffects = [];
-
+        console.log("ingredients", ingredients);
         if (expiry < today) {
             // Call the Flask API for expired medicines
-            const response = await axios.post(process.env.FLASK_API, { ingredients });
+            const response = await axios.post(process.env.FLASK_API, { composition });
             sideEffects = response.data.sideEffects;
             status = "expired";
         } else {

@@ -1,5 +1,9 @@
 flask
-numpy
-pandas
 scikit-learn
+numpy
 requests
+
+flask 
+joblib 
+scikit-learn 
+tensorflow
